@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Calendar with Navigation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .title {
+            font-size: 20px; 
+            padding-bottom: 10px;
+            font-style: italic;
+        }
+        
+        h1 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .navigation {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-arrow {
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin: 0 5px;
+            font-size: 18px;
+            transition: background-color 0.2s;
+        }
+        
+        .nav-arrow:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .calendar th {
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        .calendar td {
+            border: 1px solid #ddd;
+            height: 120px;
+            vertical-align: top;
+            padding: 5px;
+        }
+        
+        .date-number {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .empty {
+            background-color: #f9f9f9;
+        }
+        
+        .note-container {
+            height: 80%;
+            position: relative;
+        }
+        
+        .note {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            font-size: 0.9em;
+            overflow: auto;
+        }
+        
+        .today {
+            background-color: #f0f8ff;
+        }
+        
+        .today .date-number {
+            color: #1a73e8;
+        }
+        
+        .highlight-red {
+            background-color: #f8d7da;
+        }
+        
+        .highlight-blue {
+            background-color: #d1ecf1;
+        }
+        
+        .highlight-green {
+            background-color: #d4edda;
+        }
+        
+        .highlight-yellow {
+            background-color: #fff3cd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">Where is Ari?</div>
+        <div class="header">
+            <h1 id="month-year">March 2025</h1>
+            <div class="navigation">
+                <button id="prev-month" class="nav-arrow">&#8592;</button>
+                <button id="next-month" class="nav-arrow">&#8594;</button>
+            </div>
+        </div>
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Sunday</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- Calendar will be filled in by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Starting month and year (March 2025)
+        let currentMonth = 2; // 0-based (0 = January, 1 = February, 2 = March, etc.)
+        let currentYear = 2025;
+        
+        // Hard-coded events for multiple months
+        const eventData = {
+            // March 2025
+            "2-2025": {
+                10: { text: "LA"},
+                11: { text: "LA"},
+                12: { text: "SF"},
+                13: { text: "SF"},
+                14: { text: "SF"},
+                15: { text: "LA"},
+                16: { text: "LA"},
+                17: { text: "LA"},
+                18: { text: "LA"},
+                19: { text: "LA"},
+                20: { text: "LA"},
+                21: { text: "LA"},
+                22: { text: "LA"},
+                23: { text: "LA"},
+                24: { text: "LA"},
+                25: { text: "SF"},
+                26: { text: "SF"},
+                27: { text: "SF"},
+                28: { text: "SF"},
+                29: { text: "LA"},
+                30: { text: "LA"},
+                31: { text: "LA"},
+            },
+            // april
+            "3-2025": {
+                1: { text: "LA"},
+                2: { text: "LA"},
+                3: { text: "LA"},
+                4: { text: "LA"},
+                5: { text: "LA"},
+                6: { text: "LA"},
+                7: { text: "LA"},
+                8: { text: "LA"},
+                9: { text: "SF"},
+                10: { text: "SF"},
+                11: { text: "SF"},
+                12: { text: "SF"},
+                13: { text: "SF"},
+                14: { text: "SF"},
+                15: { text: "LA"},
+                16: { text: "LA"},
+                17: { text: "LA"},
+                18: { text: "LA"},
+                19: { text: "LA"},
+                20: { text: "LA"},
+                21: { text: "LA"},
+                22: { text: "SF"},
+                23: { text: "SF"},
+                24: { text: "SF"},
+                25: { text: "LA"},
+                26: { text: "LA"},
+                27: { text: "LA"},
+                28: { text: "LA"},
+                29: { text: "LA"},
+                30: { text: "LA"},
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners for navigation buttons
+            document.getElementById('prev-month').addEventListener('click', goToPrevMonth);
+            document.getElementById('next-month').addEventListener('click', goToNextMonth);
+            
+            // Initial render
+            renderCalendar();
+        });
+
+        function goToPrevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendar();
+        }
+
+        function goToNextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            // Month names for header
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"];
+            
+            // Update header with current month and year
+            document.getElementById('month-year').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            const calendarBody = document.getElementById('calendar-body');
+            calendarBody.innerHTML = '';
+
+            // Get first day of the month
+            const firstDay = new Date(currentYear, currentMonth, 1);
+            const firstDayIndex = firstDay.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+            // Get last day of the month
+            const lastDay = new Date(currentYear, currentMonth + 1, 0);
+            const totalDays = lastDay.getDate();
+
+            // Current date for highlighting today
+            const now = new Date();
+            const realToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const today = new Date(2025, 2, 9); // Hard-coded to March 9, 2025 for display purposes
+
+            // Create calendar rows and cells
+            let row = document.createElement('tr');
+
+            // Create empty cells for days before the 1st of the month
+            for (let i = 0; i < firstDayIndex; i++) {
+                const cell = document.createElement('td');
+                cell.classList.add('empty');
+                row.appendChild(cell);
+            }
+
+            // Fill in the days of the month
+            for (let day = 1; day <= totalDays; day++) {
+                // If we've reached the end of a week, start a new row
+                if ((firstDayIndex + day - 1) % 7 === 0 && day !== 1) {
+                    calendarBody.appendChild(row);
+                    row = document.createElement('tr');
+                }
+
+                const cell = document.createElement('td');
+                const currentDate = new Date(currentYear, currentMonth, day);
+                
+                // Check if this day is today (March 9, 2025)
+                if (currentDate.getFullYear() === today.getFullYear() && 
+                    currentDate.getMonth() === today.getMonth() && 
+                    currentDate.getDate() === today.getDate()) {
+                    cell.classList.add('today');
+                }
+
+                // Create date number
+                const dateNumber = document.createElement('div');
+                dateNumber.classList.add('date-number');
+                dateNumber.textContent = day;
+                cell.appendChild(dateNumber);
+
+                // Create note container
+                const noteContainer = document.createElement('div');
+                noteContainer.classList.add('note-container');
+                
+                // Create note div (not editable)
+                const note = document.createElement('div');
+                note.classList.add('note');
+                
+                // Get events for current month and year
+                const monthYearKey = `${currentMonth}-${currentYear}`;
+                const events = eventData[monthYearKey] || {};
+                
+                // Add event data if exists for this day
+                if (events[day]) {
+                    note.textContent = events[day].text;
+                    if (events[day].text == "LA") {
+                        note.classList.add("highlight-blue");
+                    }
+                    if (events[day].text == "SF") {
+                        note.classList.add("highlight-green");
+                    }
+                }
+                
+                noteContainer.appendChild(note);
+                cell.appendChild(noteContainer);
+                row.appendChild(cell);
+            }
+
+            // Add the last row to the calendar
+            calendarBody.appendChild(row);
+        }
+    </script>
+</body>
+</html>
