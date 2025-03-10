@@ -191,7 +191,7 @@
             },
             // april
             "3-2025": {
-                1: { text: "LA"},
+                1: { text: "LA"/*, highlight:"highlight-yellow"*/},
                 2: { text: "LA"},
                 3: { text: "LA"},
                 4: { text: "LA"},
@@ -327,8 +327,11 @@
                     if (events[day].text == "LA") {
                         note.classList.add("highlight-blue");
                     }
-                    if (events[day].text == "SF") {
+                    else if (events[day].text == "SF") {
                         note.classList.add("highlight-green");
+                    }
+                    else {
+                        note.classList.add(events[day].highlight);
                     }
                 }
                 
