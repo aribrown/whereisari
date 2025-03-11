@@ -349,7 +349,7 @@
             // Current date for highlighting today
             const now = new Date();
             const realToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const today = new Date(2025, 2, 9); // Hard-coded to March 9, 2025 for display purposes
+            const today = new Date(2025, 2, 9);
 
             // Create calendar rows and cells
             let row = document.createElement('tr');
@@ -372,10 +372,9 @@
                 const cell = document.createElement('td');
                 const currentDate = new Date(currentYear, currentMonth, day);
                 
-                // Check if this day is today (March 9, 2025)
-                if (currentDate.getFullYear() === today.getFullYear() && 
-                    currentDate.getMonth() === today.getMonth() && 
-                    currentDate.getDate() === today.getDate()) {
+                if (currentDate.getFullYear() === realToday.getFullYear() && 
+                    currentDate.getMonth() === realToday.getMonth() && 
+                    currentDate.getDate() === realToday.getDate()) {
                     cell.classList.add('today');
                 }
 
