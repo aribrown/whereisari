@@ -159,8 +159,8 @@
 
     <script>
         // Starting month and year (March 2025)
-        let currentMonth = 2; // 0-based (0 = January, 1 = February, 2 = March, etc.)
-        let currentYear = 2025;
+        let currentMonth = new Date().getMonth(); // 0-based (0 = January, 1 = February, 2 = March, etc.)
+        let currentYear = new Date().getFullYear();
         
         // Hard-coded events for multiple months
         const eventData = {
